@@ -1,7 +1,7 @@
 name: terraform-aws-subnet
 cloud: aws          # aws | google | common
-tier: capability          # primitive | capability | blueprint
-maturity: experimental    # experimental | stable | deprecated
+tier: primitive
+maturity: experimental
 description: Subnet in an existing VPC with an optional route table association
 owners: [platform]
 upstream: null            # e.g. "terraform-aws-modules/s3-bucket/aws 5.17.0"
