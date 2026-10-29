@@ -29,6 +29,7 @@ data "aws_availability_zones" "available" {
 }
 
 # Prerequisites the module does not create. Both carry the olensys-test- name so the sweeper finds them.
+#trivy:ignore:AVD-AWS-0178 test fixture; flow logs add nothing to a VPC that exists for one apply
 resource "aws_vpc" "this" {
   cidr_block = "10.90.0.0/16"
 
