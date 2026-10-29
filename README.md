@@ -1,6 +1,6 @@
-# __NAME__
+# terraform-aws-subnet
 
-__DESCRIPTION__
+Subnet in an existing VPC with an optional route table association
 
 ## Opinions
 
@@ -10,7 +10,7 @@ __DESCRIPTION__
 
 ```hcl
 module "this" {
-  source = "git::https://github.com/Olensys/__NAME__.git?ref=v1.0.0"
+  source = "git::https://github.com/Olensys/terraform-aws-subnet.git?ref=v1.0.0"
 
   name = "example"
   context = {
