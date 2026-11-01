@@ -49,8 +49,14 @@ variable "availability_zone" {
   type        = string
 }
 
+variable "create_route_table_association" {
+  description = "Whether to associate the subnet with route_table_id. A boolean rather than a null check so the route table may be created in the same apply. False leaves the subnet on the VPC main route table."
+  type        = bool
+  default     = false
+}
+
 variable "route_table_id" {
-  description = "Route table to associate with the subnet. Null creates no association, so the subnet uses the VPC main route table."
+  description = "Route table to associate with the subnet. Required when create_route_table_association is true; ignored otherwise."
   type        = string
   default     = null
 }

@@ -6,7 +6,7 @@ Subnet in an existing VPC with an optional route table association
 
 - One subnet per module instance; call the module with `for_each` for several subnets.
 - `map_public_ip_on_launch` is `false` unless set, so instances do not get a public IP by default.
-- Without `route_table_id` no association is created and the subnet uses the VPC main route table.
+- The route table association is switched on with `create_route_table_association`, a boolean rather than a null check on `route_table_id`, so the route table may be created in the same apply. Off by default: the subnet uses the VPC main route table.
 - The subnet gets a `Name` tag equal to `name`.
 - The VPC, route tables and gateways are not created here; use `terraform-aws-vpc` for those.
 
@@ -26,7 +26,9 @@ module "subnet" {
   vpc_id            = module.vpc.id
   cidr_block        = "10.0.32.0/24"
   availability_zone = "us-west-2a"
-  route_table_id    = module.vpc.private_route_table_ids[0]
+
+  create_route_table_association = true
+  route_table_id                 = module.vpc.private_route_table_ids[0]
 
   tags = module.naming.tags
 }
@@ -67,8 +69,9 @@ No modules.
 | <a name="input_name"></a> [name](#input\_name) | Resource name. Lowercase letters, digits and hyphens. | `string` | n/a | yes |
 | <a name="input_vpc_id"></a> [vpc\_id](#input\_vpc\_id) | ID of the VPC the subnet belongs to. | `string` | n/a | yes |
 | <a name="input_create"></a> [create](#input\_create) | Whether to create any resources. Set false to create nothing. | `bool` | `true` | no |
+| <a name="input_create_route_table_association"></a> [create\_route\_table\_association](#input\_create\_route\_table\_association) | Whether to associate the subnet with route\_table\_id. A boolean rather than a null check so the route table may be created in the same apply. False leaves the subnet on the VPC main route table. | `bool` | `false` | no |
 | <a name="input_map_public_ip_on_launch"></a> [map\_public\_ip\_on\_launch](#input\_map\_public\_ip\_on\_launch) | Whether instances launched in the subnet get a public IP by default. Defaults to false; request a public IP explicitly where one is needed. | `bool` | `false` | no |
-| <a name="input_route_table_id"></a> [route\_table\_id](#input\_route\_table\_id) | Route table to associate with the subnet. Null creates no association, so the subnet uses the VPC main route table. | `string` | `null` | no |
+| <a name="input_route_table_id"></a> [route\_table\_id](#input\_route\_table\_id) | Route table to associate with the subnet. Required when create\_route\_table\_association is true; ignored otherwise. | `string` | `null` | no |
 | <a name="input_tags"></a> [tags](#input\_tags) | Tags merged onto every taggable resource, applied last. | `map(string)` | `{}` | no |
 
 ## Outputs
@@ -80,6 +83,6 @@ No modules.
 | <a name="output_cidr_block"></a> [cidr\_block](#output\_cidr\_block) | IPv4 CIDR block of the subnet. Null when create is false. |
 | <a name="output_id"></a> [id](#output\_id) | ID of the subnet. Null when create is false. |
 | <a name="output_name"></a> [name](#output\_name) | Name of the subnet (its Name tag). Null when create is false. |
-| <a name="output_route_table_association_id"></a> [route\_table\_association\_id](#output\_route\_table\_association\_id) | ID of the route table association. Null when create is false or no route table is given. |
+| <a name="output_route_table_association_id"></a> [route\_table\_association\_id](#output\_route\_table\_association\_id) | ID of the route table association. Null when create or create\_route\_table\_association is false. |
 | <a name="output_tags"></a> [tags](#output\_tags) | Tags applied to the subnet, with context.extra\_tags merged in. Null when create is false. |
 <!-- END_TF_DOCS -->
