@@ -25,8 +25,9 @@ run "test_create_false_plans_nothing" {
   command = plan
 
   variables {
-    create         = false
-    route_table_id = "rtb-0123456789abcdef0"
+    create                         = false
+    create_route_table_association = true
+    route_table_id                 = "rtb-0123456789abcdef0"
   }
 
   assert {
@@ -53,7 +54,7 @@ run "test_subnet_defaults" {
 
   assert {
     condition     = length(aws_route_table_association.this) == 0
-    error_message = "No route table association without route_table_id."
+    error_message = "No route table association unless create_route_table_association is set."
   }
 }
 
@@ -61,13 +62,37 @@ run "test_route_table_association" {
   command = plan
 
   variables {
-    route_table_id = "rtb-0123456789abcdef0"
+    create_route_table_association = true
+    route_table_id                 = "rtb-0123456789abcdef0"
   }
 
   assert {
     condition     = aws_route_table_association.this[0].route_table_id == "rtb-0123456789abcdef0"
     error_message = "The subnet must be associated with the given route table."
   }
+}
+
+run "test_route_table_id_alone_creates_no_association" {
+  command = plan
+
+  variables {
+    route_table_id = "rtb-0123456789abcdef0"
+  }
+
+  assert {
+    condition     = length(aws_route_table_association.this) == 0 && output.route_table_association_id == null
+    error_message = "route_table_id without create_route_table_association must not create an association."
+  }
+}
+
+run "test_association_requires_route_table_id" {
+  command = plan
+
+  variables {
+    create_route_table_association = true
+  }
+
+  expect_failures = [aws_route_table_association.this]
 }
 
 run "test_public_ip_opt_in" {

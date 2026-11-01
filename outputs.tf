@@ -24,8 +24,8 @@ output "cidr_block" {
 }
 
 output "route_table_association_id" {
-  description = "ID of the route table association. Null when create is false or no route table is given."
-  value       = var.create && var.route_table_id != null ? aws_route_table_association.this[0].id : null
+  description = "ID of the route table association. Null when create or create_route_table_association is false."
+  value       = var.create && var.create_route_table_association ? aws_route_table_association.this[0].id : null
 }
 
 output "tags" {

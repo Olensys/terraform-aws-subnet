@@ -16,9 +16,18 @@ resource "aws_subnet" "this" {
   tags = local.tags
 }
 
+# Gated by a boolean rather than `route_table_id != null`: the id is unknown at plan time when the route
+# table is created in the same apply, and `count` cannot depend on an unknown value.
 resource "aws_route_table_association" "this" {
-  count = var.create && var.route_table_id != null ? 1 : 0
+  count = var.create && var.create_route_table_association ? 1 : 0
 
   subnet_id      = aws_subnet.this[0].id
   route_table_id = var.route_table_id
+
+  lifecycle {
+    precondition {
+      condition     = var.route_table_id != null
+      error_message = "route_table_id must be set when create_route_table_association is true."
+    }
+  }
 }
